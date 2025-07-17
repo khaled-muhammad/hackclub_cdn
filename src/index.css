@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@import 'tailwindcss';
+
+.inter {
+  font-family: "Inter", sans-serif;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    @apply bg-[#f6fbf9];
+
+}
+
+.wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  @apply bg-[#caffe5]/30;
+  overflow: hidden;
+  z-index: -10;
+}
+
+.white-side {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 160vh;
+  width: 160vh;
+  background: #f6fbf9;
+  border-top-right-radius: 100% 100%;
+  border-bottom-right-radius: 100% 100%;
+}
+
+nav .nav-link {
+  @apply relative transition-all duration-300 hover:text-[#3e9478];
+}
+
+nav .nav-link::before {
+  @apply content-[''] absolute bottom-0 left-0 w-full h-1 opacity-0 bg-green-600 rounded-full transition-all duration-500 blur-md;
+}
+
+nav .nav-link:hover::before {
+  @apply opacity-100;
+}
+
+nav .nav-btn {
+  @apply relative inline-block transition-all duration-300 bg-gradient-to-br from-[#6bbf95] to-[#3e9478] text-white min-w-[150px] text-center px-8 py-3 rounded-xl;
+}
+
+nav .nav-btn:hover {
+  @apply scale-105 -translate-y-1;
+}
+
+nav .nav-btn::before {
+  @apply content-[''] block pointer-events-none absolute bottom-[-1.5rem] left-1/2 w-20 h-1 bg-green-600 rounded-full opacity-0 transition-all duration-500 blur-md;
+  transform: translateX(-50%);
+}
+
+nav .nav-btn:hover::before {
+  @apply opacity-100;
+}
+
+/* Image Grid Animation Styles */
+.right-grid .image-item {
+  animation: fadeIn 0.5s ease-in-out;
+  transform-origin: center;
+  box-shadow: 0 4px 15px rgba(62, 148, 120, 0.1);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.4s ease;
+}
+
+.right-grid .image-item:hover {
+  z-index: 10;
+  transform: scale(1.08) translateY(-5px);
+  box-shadow: 0 15px 30px rgba(62, 148, 120, 0.25);
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scroll {
+  animation: scrollAnimation 60s linear infinite;
+  will-change: transform;
+}
+
+@keyframes scrollAnimation {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.grid-container {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  position: relative;
+}
+
+.grid-scroll-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(62, 148, 120, 0.1),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  padding: 16px;
+}
+
+/* Add hover pause effect */
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
