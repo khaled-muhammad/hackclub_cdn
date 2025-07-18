@@ -58,7 +58,8 @@ const ImageGrid = () => {
     }, 2000);
     
     return () => clearInterval(interval);
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   
   return (
       <div className="grid-container h-full w-full overflow-hidden relative">
