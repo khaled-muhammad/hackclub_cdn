@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { FiImage, FiUpload } from 'react-icons/fi';
+// import { FiImage, FiUpload } from 'react-icons/fi';
 
 interface ImageItem {
   id: number;
