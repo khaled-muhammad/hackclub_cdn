@@ -61,7 +61,6 @@ const ImageGrid = () => {
   }, []);
   
   return (
-    <div className="right-grid absolute top-1/2 right-0 -translate-y-1/2 w-1/2 h-[80vh] pr-[6rem] mt-10">
       <div className="grid-container h-full w-full overflow-hidden relative">
         {/* Decorative elements */}
         <div className="absolute top-5 left-5 w-20 h-20 rounded-full bg-gradient-to-br from-[#caffe5] to-[#3e9478]/20 blur-xl z-0"></div>
@@ -125,7 +124,6 @@ const ImageGrid = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
