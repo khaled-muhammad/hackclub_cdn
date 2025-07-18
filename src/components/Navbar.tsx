@@ -19,7 +19,7 @@ export default function NavBar() {
             Hack Club CDN
           </span>
         </a>
-        <ul className="flex gap-14 font-semibold text-black/60 items-center">
+        <ul className="gap-14 font-semibold text-black/60 items-center hidden md:flex">
           <li>
             <a href="#" className="nav-link">
               About
@@ -37,23 +37,26 @@ export default function NavBar() {
           </li>
         </ul>
       </nav>
-      <div className="px-[6rem] py-[2rem] flex flex-col justify-center h-[80vh]">
-        <div className="left relative flex flex-col items-start w-[35%] mt-20 h-full">
-            <h1 className="text-6xl">Manage all your <span className="text-[#51a079]">Media</span> in <span className="text-[#51a079]">one place</span></h1>
+      <div className="md:px-[6rem] md:py-[2rem] px-[2rem] flex flex-col md:flex-row md:justify-between h-[80vh]">
+        <div className="left relative flex flex-col items-start md:w-[35%] md:mt-20 h-full">
+            <h1 className="text-6xl text-center md:text-start">Manage all your <span className="text-[#51a079]">Media</span> in <span className="text-[#51a079]">one place</span></h1>
             <h4 className="mt-4 text-green-600">A CDN for Hack Clubbers, shipped by students for students.</h4>
             <div className="links flex gap-5">
                 <a href="#" className="mt-10 block relative bg-transparent px-6 py-3 outline-2 outline-[#51a079] rounded-xl font-semibold text-[#3aa36d] hover:text-white hover:bg-[#51a079] transition-all duration-300 overflow-hidden before:w-full before:left-1/2 before:-translate-x-1/2 before:h-3 before:rounded-full before:absolute before:-bottom-1 before:blur-md before:bg-green-300">Get Started</a>
                 <a href="https://hackclub.com/" target='_blank' className="mt-10 block relative hover:bg-transparent px-6 py-3 outline-2 outline-[#a06351] rounded-xl font-semibold hover:text-[#a34a3a] text-white bg-[#a06351] transition-all duration-300 overflow-hidden before:w-full before:left-1/2 before:-translate-x-1/2 before:h-3 before:rounded-full before:absolute before:-bottom-1 before:blur-md before:bg-red-300">What is Hackclub?</a>
             </div>
 
-            <div className="iconic w-15 h-15 p-3 rounded-2xl bg-amber-500 flex justify-center items-center text-white absolute bottom-0 mb-20 right-0 before:absolute before:w-20 before:h-10 before:-z-10 before:bg-amber-500/60 before:-bottom-6 before:rounded-full before:blur-md">
+            <div className="iconic w-15 h-15 p-3 rounded-2xl bg-amber-500 hidden sm:flex justify-center items-center text-white absolute bottom-0 mb-20 right-0 md:-left-20 lg:left-auto lg:right-0 before:absolute before:w-20 before:h-10 before:-z-10 before:bg-amber-500/60 before:-bottom-6 before:rounded-full before:blur-md">
                 <LuFileImage fontSize={35} />
             </div>
-            <div className="iconic w-15 h-15 p-3 rounded-2xl bg-pink-500 flex justify-center items-center text-white absolute bottom-0 mb-100 -right-40 rotate-45 before:absolute before:w-20 before:h-10 before:-z-10 before:bg-pink-500/60 before:-bottom-6 before:rounded-full before:blur-md">
+            <div className="iconic w-15 h-15 p-3 rounded-2xl bg-pink-500 hidden md:flex justify-center items-center text-white md:absolute bottom-0 mb-100 -right-25 lg:-right-40 rotate-45 before:absolute before:w-20 before:h-10 before:-z-10 before:bg-pink-500/60 before:-bottom-6 before:rounded-full before:blur-md">
                 <LuFileVideo fontSize={35} />
             </div>
         </div>
-        <ImageGrid />
+
+        <div className="right-grid mt-10 md:mt-0 md:w-1/2 h-[50vh] md:h-[80vh] pr-[1rem]">
+            <ImageGrid />
+        </div>
       </div>
     </header>
   );
