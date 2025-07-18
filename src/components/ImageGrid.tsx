@@ -58,7 +58,7 @@ const ImageGrid = () => {
     }, 2000);
     
     return () => clearInterval(interval);
-  }, []);
+  });
   
   return (
       <div className="grid-container h-full w-full overflow-hidden relative">
