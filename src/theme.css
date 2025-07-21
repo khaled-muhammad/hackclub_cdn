@@ -1,0 +1,19 @@
+@theme {
+  --space-root: 1rem;
+  --space-xs: calc(var(--space-root) / 2);
+  --space-s: calc(var(--space-root) / 1.5);
+  --space-m: var(--space-root);
+  --space-l: calc(var(--space-root) * 1.5);
+  --space-xl: calc(var(--space-root) * 2);
+  --color-primary: #3e9478;
+  --color-secondary: #205745;
+  --color-tertiary: #caffe5;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --base-border-radius: 0.25rem;
+  --ease: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --duration: 350ms;
+  --font-family: 'Roboto', sans-serif;
+  --font-size: 1.25rem;
+}
