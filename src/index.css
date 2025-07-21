@@ -2,6 +2,8 @@
 
 @import 'tailwindcss';
 
+@import './theme.css';
+
 .inter {
   font-family: "Inter", sans-serif;
 }
@@ -45,20 +47,20 @@ nav .nav-link:hover::before {
   @apply opacity-100;
 }
 
-nav .nav-btn {
+.green-glow-btn {
   @apply relative inline-block transition-all duration-300 bg-gradient-to-br from-[#6bbf95] to-[#3e9478] text-white min-w-[150px] text-center px-8 py-3 rounded-xl;
 }
 
-nav .nav-btn:hover {
+.green-glow-btn:hover {
   @apply scale-105 -translate-y-1;
 }
 
-nav .nav-btn::before {
+.green-glow-btn::before {
   @apply content-[''] block pointer-events-none absolute bottom-[-1.5rem] left-1/2 w-20 h-1 bg-green-600 rounded-full opacity-0 transition-all duration-500 blur-md;
   transform: translateX(-50%);
 }
 
-nav .nav-btn:hover::before {
+.green-glow-btn:hover::before {
   @apply opacity-100;
 }
 
@@ -162,6 +164,7 @@ nav .nav-btn:hover::before {
     }
 }
 
+/* Water bubble effect for feature icons */
 .water-bubble {
   position: relative;
   display: flex;
@@ -180,6 +183,14 @@ nav .nav-btn:hover::before {
   backdrop-filter: blur(3px);
   transform-origin: center;
   transition: all 0.5s ease;
+}
+
+.water-bubble:hover {
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 
+    0 15px 25px rgba(62, 148, 120, 0.2),
+    inset 0 -8px 20px rgba(255, 255, 255, 0.7),
+    inset 0 8px 20px rgba(126, 235, 198, 0.5);
 }
 
 .water-bubble::before {
@@ -234,4 +245,42 @@ nav .nav-btn:hover::before {
   100% {
     border-radius: 60% 70% 65% 75%;
   }
+}
+
+/* Auth loading spinner styles */
+.auth-loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f6fbf9 100%);
+  font-family: "Inter", sans-serif;
+}
+
+.auth-loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #3e9478;
+}
+
+.auth-loading-spinner svg {
+  animation: spin 1s linear infinite;
+}
+
+.auth-loading-spinner p {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 0;
+  opacity: 0.8;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spacer {
+  @apply my-15;
 }
