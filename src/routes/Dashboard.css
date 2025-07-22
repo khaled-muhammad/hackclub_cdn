@@ -1,0 +1,18 @@
+@import '../theme.css';
+@import 'tailwindcss';
+
+
+.tab-nav-item {
+    color: var(--color-primary);
+    cursor: pointer;
+    user-select: none;
+    @apply font-medium opacity-70 my-3 transition-all duration-300 py-4;
+}
+
+.tab-nav-item .text {
+    @apply flex gap-2 items-center justify-start ps-9;
+}
+
+.tab-nav-item.active {
+    @apply opacity-100 bg-primary/10 border-l-3;
+}
