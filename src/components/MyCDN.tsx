@@ -13,11 +13,14 @@ import {
   FiTrash2,
   FiShare2,
   FiMoreVertical,
+  FiX,
+  FiLock,
 } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import useUploadWrapper from "./UploadWrapper";
 import { toast } from 'react-toastify';
+import { isValidEmail } from "../utils";
 
 // Types for the API response
 interface OwnerDetail {
@@ -178,6 +181,141 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   );
 };
 
+const ShareModal = ({
+  item, 
+  isOpen, 
+  onClose, 
+  onSubmit,
+  isLoading = false
+}: {
+  item: DisplayItem;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (folderName: string) => void;
+  isLoading?: boolean;
+}) => {
+  const [currentEmail, setCurrentEmail] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [collectedEmails, setCollectedEmails] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentEmail("");
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // if (currentEmail.trim() && isValidEmail(currentEmail.trim())) {
+    //   setCollectedEmails([...collectedEmails, currentEmail.trim()])
+    //   // onSubmit(folderName.trim());
+    // }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }else if (e.key === 'Enter') {
+      if (currentEmail.trim() && isValidEmail(currentEmail.trim())) {
+        setCollectedEmails([...collectedEmails, currentEmail.trim()])
+        setCurrentEmail('');
+        // onSubmit(folderName.trim());
+      }
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-md
+       bg-opacity-50 flex items-center justify-center z-50"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 scale-100">
+        <div className="px-6 py-4 pb-0 border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">Share "{item.name}"</h2>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="mb-6">
+            {collectedEmails.length == 0? <input
+              ref={inputRef}
+              id="email"
+              type="text"
+              value={currentEmail}
+              onChange={(e) => setCurrentEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="khaledmuhmmed99@gmail.com"
+              disabled={isLoading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              maxLength={255}
+            /> : <div className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex gap-3 flex-wrap hover:cursor-text" onClick={() => {inputRef.current?.focus()}}>
+              <div className="flex gap-3">{collectedEmails.map((em) => <span className="bg-green-200/20 rounded-xl ring-1 p-2 text-xs ring-green-500/30 flex gap-3">{em} <FiX size={16} className="cursor-pointer" onClick={() => setCollectedEmails(collectedEmails.filter((emm) => emm != em))} /></span>)}</div>
+              <input
+              ref={inputRef}
+              type="text"
+              value={currentEmail}
+              onChange={(e) => setCurrentEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="flex-1 min-w-[120px] bg-transparent outline-none border-none focus:ring-0 focus:outline-none"
+              />
+              </div>}
+            <label htmlFor="email" className="block text-xs font-medium text-gray-700/80 mt-2">
+              Share with other hack clubbers using email address (Click enter to add more than one email)
+            </label>
+
+            <h3 className="mt-4 mb-5">General Access</h3>
+            <div className="flex gap-2 items-center">
+              <div className="aspect-square p-2 rounded-full bg-green-500/50 text-white"><FiLock size={20} /></div>
+              <div>
+                <select name="general-access" id="general-access" className="block">
+                  <option value="none">Restricted</option>
+                  <option value="view">Anyone with the link</option>
+                </select>
+                <span className="text-xs block ml-1 mt-3">Only people with access can open with the link</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex gap-3 justify-between">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isLoading}
+              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Copy Link
+            </button>
+            <button
+              type="submit"
+              disabled={collectedEmails.length == 0 || isLoading}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating...
+                </>
+              ) : (
+                <>
+                  Done
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const MyCDN = () => {
   const [viewMode, setViewMode] = useState("list");
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
@@ -194,27 +332,28 @@ const MyCDN = () => {
 
   const navigate = useNavigate();
 
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [inshareItem, setInshareItem] = useState(null);
+
   // Function to handle dropdown menu
   const handleDropdownClick = (itemId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     const rect = event.currentTarget.getBoundingClientRect();
-    const menuWidth = 192; // w-48 = 192px
-    const menuHeight = 120; // Approximate height
+    const menuWidth = 192;
+    const menuHeight = 120;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    // Calculate horizontal position
-    let x = rect.right - menuWidth; // Start from right edge of button
-    if (x < 8) { // If too far left, move to right of button
+    let x = rect.right - menuWidth;
+    if (x < 8) {
       x = rect.left;
     }
-    if (x + menuWidth > viewportWidth - 8) { // If too far right, adjust
+    if (x + menuWidth > viewportWidth - 8) {
       x = viewportWidth - menuWidth - 8;
     }
 
-    // Calculate vertical position
-    let y = rect.bottom + 4; // 4px below button
-    if (y + menuHeight > viewportHeight - 8) { // If would go below viewport, show above
+    let y = rect.bottom + 4;
+    if (y + menuHeight > viewportHeight - 8) {
       y = rect.top - menuHeight - 4;
     }
 
@@ -226,8 +365,10 @@ const MyCDN = () => {
   };
 
   const handleShare = (item: DisplayItem) => {
+    setInshareItem(item);
+    setShowShareModal(true)
+
     console.log('Share item:', item);
-    // Implement share functionality
     if (item.url) {
       navigator.clipboard.writeText(item.url).then(() => {
         toast.success('Link copied to clipboard!');
@@ -242,14 +383,14 @@ const MyCDN = () => {
 
   const handleStar = async (item: DisplayItem) => {
     console.log('Toggle star for item:', item);
-    // Implement star/unstar functionality
     try {
       if (item.type === 'file') {
-        await session.post(`cdn/files/${item.id}/toggle-star/`);
+        await session.post(`cdn/files/${item.id}/star/`);
       } else {
-        await session.post(`cdn/folders/${item.id}/toggle-star/`);
+        // await session.post(`cdn/folders/${item.id}/star/`);
+        toast('Folder starring is coming soon!')
+        return;
       }
-      // Refresh data to update star status
       fetchData();
       toast.success(item.is_starred ? `Removed "${item.name}" from starred` : `Added "${item.name}" to starred`);
     } catch (error) {
@@ -261,26 +402,21 @@ const MyCDN = () => {
 
   const handleDelete = async (item: DisplayItem) => {
     console.log('Delete item:', item);
-    // Implement delete functionality
-    if (window.confirm(`Are you sure you want to delete "${item.name}"? This action cannot be undone.`)) {
       try {
         if (item.type === 'file') {
           await session.delete(`cdn/files/${item.id}/`);
         } else {
           await session.delete(`cdn/folders/${item.id}/`);
         }
-        // Refresh data to remove deleted item
         fetchData();
         toast.success(`Successfully deleted "${item.name}"`);
       } catch (error) {
         console.error('Error deleting item:', error);
         toast.error('Failed to delete item');
       }
-    }
     setActiveDropdown(null);
   };
 
-  // Function to get file icon and color based on mime type
   const getFileIconAndColor = (mimeType: string, filename: string) => {
     const extension = filename.split('.').pop()?.toLowerCase();
     
@@ -301,7 +437,6 @@ const MyCDN = () => {
     }
   };
 
-  // Function to format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -311,7 +446,6 @@ const MyCDN = () => {
     });
   };
 
-  // Function to convert API data to display format
   const convertToDisplayItems = (data: ApiResponse): DisplayItem[] => {
     const items: DisplayItem[] = [];
 
@@ -326,7 +460,7 @@ const MyCDN = () => {
         size: '—',
         icon: <FiFolder size={24} />,
         color: 'blue',
-        is_starred: false // Note: Add this field to API if folders can be starred
+        is_starred: false // No backend support yet
       });
     });
 
@@ -351,9 +485,6 @@ const MyCDN = () => {
   };
 
   const fetchData = async () => {
-    /*alert(fullPath)*/
-    alert(folderId)
-    alert(folderId)
     if (!isRoot) {
       const response = await session.get(`cdn/folders/${folderId}/`);
       setFullPath(response.data.full_path.split('/'))
@@ -383,7 +514,6 @@ const MyCDN = () => {
     }
   }, [isAuthenticated, authLoading, navigate]);
 
-  // Listen for folder creation and file upload events to refresh data
   useEffect(() => {
     const handleFolderCreated = () => {
       console.log('Folder created event received, refreshing data...');
@@ -411,7 +541,6 @@ const MyCDN = () => {
     };
   }, [folderId]);
 
-  // Close dropdown when navigating or clicking outside
   useEffect(() => {
     const handleGlobalClick = () => {
       setActiveDropdown(null);
@@ -433,7 +562,6 @@ const MyCDN = () => {
     }
   }
 
-  // Get display items from API data
   const displayItems = apiData ? convertToDisplayItems(apiData) : [];
 
   if (authLoading || isLoading) {
@@ -716,6 +844,14 @@ const MyCDN = () => {
           position={dropdownPosition}
         />
       )}
+
+      <ShareModal
+        item={inshareItem!}
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        onSubmit={() => {}}
+        isLoading={false}
+      />
     </div>
   );
 };
