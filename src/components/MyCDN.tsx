@@ -351,6 +351,9 @@ const MyCDN = () => {
   };
 
   const fetchData = async () => {
+    /*alert(fullPath)*/
+    alert(folderId)
+    alert(folderId)
     if (!isRoot) {
       const response = await session.get(`cdn/folders/${folderId}/`);
       setFullPath(response.data.full_path.split('/'))
@@ -406,7 +409,7 @@ const MyCDN = () => {
       window.removeEventListener('fileUploaded', handleFileUploaded);
       window.removeEventListener('allUploadsComplete', handleAllUploadsComplete);
     };
-  }, [isAuthenticated, authLoading]);
+  }, [folderId]);
 
   // Close dropdown when navigating or clicking outside
   useEffect(() => {
