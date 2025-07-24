@@ -15,6 +15,7 @@ import {
   FiMoreVertical,
   FiX,
   FiLock,
+  FiGlobe,
 } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -198,17 +199,55 @@ const ShareModal = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [collectedEmails, setCollectedEmails] = useState([]);
 
+  const [currentShareData, setCurrentShareData] = useState([]);
+  const [publicToken, setPublicToken] = useState(null);
+  const [publicShareId, setPublicShareId] = useState(null);
+
   useEffect(() => {
     if (isOpen) {
+      setPublicToken(null);
+      setPublicShareId(null);
+      setCollectedEmails([]);
       setCurrentEmail("");
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
+
+      session.get(`cdn/shares/status/?resource_type=${item.type}&resource_id=${item.id}`).then((res) => {
+        setCurrentShareData(res.data)
+        res.data.forEach((share) => {
+          if (share.is_public) {
+            setPublicToken(share.public_token);
+            setPublicShareId(share.share_id);
+          }
+          setCollectedEmails(share.shared_with.map((shw) => {
+            return {
+              share_id: share.share_id,
+              username: shw.username,
+              user_id: shw.user_id,
+            };
+          }))
+        })
+      }).catch(() => {
+        onClose();
+      })
     }
   }, [isOpen]);
-
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    session.post('cdn/shares/', {
+      resource_type: item.type,
+      resource_id: item.id,
+      is_public: false,
+      shared_users: collectedEmails.map((em) => {
+        return {user_email:em, permission_level: "view"};
+      })
+    }).then((res) => {
+      toast("Item is now shared with people");
+    }).catch((err) => {
+      toast.error("One or more user not found!");
+    })
     // if (currentEmail.trim() && isValidEmail(currentEmail.trim())) {
     //   setCollectedEmails([...collectedEmails, currentEmail.trim()])
     //   // onSubmit(folderName.trim());
@@ -220,7 +259,7 @@ const ShareModal = ({
       onClose();
     }else if (e.key === 'Enter') {
       if (currentEmail.trim() && isValidEmail(currentEmail.trim())) {
-        setCollectedEmails([...collectedEmails, currentEmail.trim()])
+        setCollectedEmails([...collectedEmails, {username: currentEmail.trim()}])
         setCurrentEmail('');
         // onSubmit(folderName.trim());
       }
@@ -254,7 +293,12 @@ const ShareModal = ({
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               maxLength={255}
             /> : <div className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex gap-3 flex-wrap hover:cursor-text" onClick={() => {inputRef.current?.focus()}}>
-              <div className="flex gap-3">{collectedEmails.map((em) => <span className="bg-green-200/20 rounded-xl ring-1 p-2 text-xs ring-green-500/30 flex gap-3">{em} <FiX size={16} className="cursor-pointer" onClick={() => setCollectedEmails(collectedEmails.filter((emm) => emm != em))} /></span>)}</div>
+              <div className="flex gap-3">{collectedEmails.map((em) => <span className="bg-green-200/20 rounded-xl ring-1 p-2 text-xs ring-green-500/30 flex gap-3">{em.username} <FiX size={16} className="cursor-pointer" onClick={() => {
+                if (em.user_id) {
+                  session.delete(`cdn/shares/${em.share_id}/remove_user/?user_email=${em.username}`)
+                }
+                setCollectedEmails(collectedEmails.filter((emm) => emm != em))
+              }} /></span>)}</div>
               <input
               ref={inputRef}
               type="text"
@@ -270,9 +314,33 @@ const ShareModal = ({
 
             <h3 className="mt-4 mb-5">General Access</h3>
             <div className="flex gap-2 items-center">
-              <div className="aspect-square p-2 rounded-full bg-green-500/50 text-white"><FiLock size={20} /></div>
+              <div className="aspect-square p-2 rounded-full bg-green-500/50 text-white">{publicToken? <FiGlobe size={20} /> : <FiLock size={20} />}</div>
               <div>
-                <select name="general-access" id="general-access" className="block">
+                <select name="general-access" id="general-access" className="block" value={publicToken? 'view' : 'none'} onChange={(event) => {
+                  if (event.target.value == 'view') {
+                    session.post('cdn/shares/', {
+                      resource_type: item.type,
+                      resource_id: item.id,
+                      is_public: true,
+                    }).then((res) => {
+                      toast("Item is now shared public");
+                      if (res.data.is_public) {
+                        setPublicToken(res.data.public_token)
+                        setPublicShareId(res.data.id)
+                      }
+                    }).catch((err) => {
+                      toast.error("Share error happened, try again later!")
+                    })
+                  } else {
+                    session.delete(`cdn/shares/${publicShareId}/`).then((res) => {
+                      toast("Item is back private.");
+                      setPublicToken(null)
+                    }).catch((err) => {
+                      toast.error("Share error happened, try again later!")
+                    })
+                  }
+
+                }}>
                   <option value="none">Restricted</option>
                   <option value="view">Anyone with the link</option>
                 </select>
@@ -284,7 +352,15 @@ const ShareModal = ({
           <div className="flex gap-3 justify-between">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                if (publicToken != null) {
+                  navigator.clipboard.writeText(publicToken).then(() => {
+                    toast.success('Link copied to clipboard!');
+                  }).catch(() => {
+                    toast.error('Failed to copy link to clipboard');
+                  });
+                }
+              }}
               disabled={isLoading}
               className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
