@@ -250,6 +250,8 @@ export const useUploadWrapper = (props: UploadWrapperProps = {}) => {
 
   const uploadFileToServer = async (file: File, onProgress: (progress: number) => void): Promise<any> => {
     try {
+      let folderId = `${extractFolderIdFromUrl()}`;
+
       onProgress(10);
       const tempUrl = await uploadToTempStorage(file);
       onProgress(33);
@@ -257,7 +259,7 @@ export const useUploadWrapper = (props: UploadWrapperProps = {}) => {
       const cdnResult = await uploadToHackClubCDN(tempUrl);
       onProgress(66);
 
-      const finalResult = await saveToBackend(file, cdnResult);
+      const finalResult = await saveToBackend(file, folderId, cdnResult);
       onProgress(100);
 
       return finalResult;
@@ -316,10 +318,9 @@ export const useUploadWrapper = (props: UploadWrapperProps = {}) => {
     };
   };
 
-  const saveToBackend = async (file: File, cdnResult: any): Promise<any> => {
+  const saveToBackend = async (file: File, folderId: string | null, cdnResult: any): Promise<any> => {
     const md5Hash = await generateMD5Hash(file);
     const sha256Hash = await generateSHA256Hash(file);
-    let folderId = extractFolderIdFromUrl();
     
     if (!folderId) {
       folderId = await fetchRootFolderId();
