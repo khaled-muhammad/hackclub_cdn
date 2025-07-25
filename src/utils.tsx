@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { FiArchive, FiFile, FiFileText, FiImage, FiPenTool, FiVideo } from "react-icons/fi";
 
 // Function to get file icon and color based on file extension
@@ -96,4 +97,19 @@ export const isValidEmail = (email: string): boolean => {
   const emailRegex =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
+}
+
+export function useIsTabletOrSmaller(): boolean {
+  const [isTablet, setIsTablet] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 1024px)');
+    const update = () => setIsTablet(mediaQuery.matches);
+
+    update();
+    mediaQuery.addEventListener('change', update);
+    return () => mediaQuery.removeEventListener('change', update);
+  }, []);
+
+  return isTablet;
 }
