@@ -76,7 +76,7 @@ const Trash = () => {
                 <span className="text-xl text-red-600">{item.resource_type == 'file'? <FiFile size={24} /> : <FiFolder size={24} />}</span>
               </div>
               <div>
-                <h3 className="font-semibold text-gray-700">{item.original_name}</h3>
+                <h3 className="font-semibold text-gray-700 truncate overflow-hidden whitespace-nowrap">{item.original_name}</h3>
                 <p className="text-sm text-red-600">
                   Deleted {formatDate(item.deleted_at)} • Expires in {getRemainingDays(item.permanent_delete_at)} days
                 </p>

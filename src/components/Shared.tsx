@@ -73,7 +73,7 @@ mb-4"></div>
                   </span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{item.resource_detail.filename || item.resource_detail.name }</h3>
+                  <h3 className="font-semibold text-gray-900 truncate overflow-hidden whitespace-nowrap">{item.resource_detail.filename || item.resource_detail.name }</h3>
                   <p className="text-sm text-gray-500">by {item.owner_detail.full_name}</p>
                 </div>
               </div>

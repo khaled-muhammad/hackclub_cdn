@@ -119,7 +119,7 @@ group-hover:scale-110 transition-transform duration-300 ${fileInfo.bgColor}`}
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-800 text-lg mb-1 group-hover:text-emerald-600 
-transition-colors duration-300">
+transition-colors duration-300 truncate overflow-hidden whitespace-nowrap">
                     {item.original_filename}
                   </h3>
                   <p className="text-emerald-700 font-medium">

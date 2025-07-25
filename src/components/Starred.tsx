@@ -82,6 +82,11 @@ const Starred = () => {
           return <div
             key={item.id}
             className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl hover:shadow-md transition-all duration-300"
+            onClick={() => {
+              if (item.cdn_url) {
+                window.open(item.cdn_url, '_blank');
+              }
+            }}
           >
             <div className="flex items-center gap-4">
               <div className="relative">
@@ -103,7 +108,7 @@ const Starred = () => {
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">{item.original_filename}</h3>
+                <h3 className="font-semibold text-gray-900 truncate overflow-hidden whitespace-nowrap">{item.original_filename}</h3>
                 <p className="text-sm text-gray-500">
                   {item.file_size_human} • Starred {formatDate(item.updated_at)}
                 </p>
@@ -112,7 +117,8 @@ const Starred = () => {
             <div className="flex items-center gap-2">
               <button
                 className="p-2 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-100 rounded-lg transition-colors"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   session.post(`cdn/files/${item.id}/star/`).then(() => {
                     update();
                   });
@@ -122,7 +128,10 @@ const Starred = () => {
               </button>
               <button
                 className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                onClick={() => {handleDelete(item)}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(item)
+                }}
               >
                 <FiTrash2 size={16} />
               </button>
