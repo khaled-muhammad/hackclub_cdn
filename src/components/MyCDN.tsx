@@ -89,13 +89,13 @@ interface FolderItem {
   updated_at: string;
 }
 
-interface ApiResponse {
+export interface ApiResponse {
   root_folder: FolderDetail;
   folders: FolderItem[];
   files: FileItem[];
 }
 
-interface DisplayItem {
+export interface DisplayItem {
   id: string;
   name: string;
   type: "folder" | "file";
