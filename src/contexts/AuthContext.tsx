@@ -85,19 +85,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }, {
         withCredentials: true
       });
-
-      if (response.data.success) {
+      console.log("HEREEEEEE")
+      if (response.data.user) {
         const userData = response.data.user;
         setUser(userData);
         setIsAuthenticated(true);
         toast.success('Login successful!');
         return true;
       } else {
-        toast.error(response.data.message || 'Login failed');
+        console.log(response)
+        toast.error(response.data.detail || 'Login failed 1');
         return false;
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      // console.log(error)
+      const errorMessage = error.response?.data?.detail || 'Login failed 2';
       toast.error(errorMessage);
       return false;
     } finally {

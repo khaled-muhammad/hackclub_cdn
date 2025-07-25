@@ -28,8 +28,10 @@ session.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    console.log("From interceptor:")
+    console.log(error.response.data)
+    console.log("=============")
+    if (error.response?.status === 401 && !originalRequest._retry && error.response?.data.detail != "Invalid credentials.") {
       originalRequest._retry = true;
       
       try {
