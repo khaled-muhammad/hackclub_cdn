@@ -16,6 +16,7 @@ import {
   FiX,
   FiLock,
   FiGlobe,
+  FiLink,
 } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -114,6 +115,7 @@ interface DropdownMenuProps {
   onShare: () => void;
   onStar: () => void;
   onDelete: () => void;
+  onCopyCDN: () => void;
   isStarred: boolean;
   position: { x: number; y: number };
 }
@@ -124,6 +126,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   onShare,
   onStar,
   onDelete,
+  onCopyCDN,
   isStarred,
   position,
 }) => {
@@ -156,6 +159,12 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
         top: position.y,
       }}
     >
+      <button
+        onClick={onCopyCDN}
+        className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors text-left">
+          <FiLink className="w-4 h-4" />
+          Copy CDN
+      </button>
       <button
         onClick={onShare}
         className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors text-left"
@@ -248,6 +257,7 @@ const ShareModal = ({
     }).catch((err) => {
       toast.error("One or more user not found!");
     })
+    onClose();
     // if (currentEmail.trim() && isValidEmail(currentEmail.trim())) {
     //   setCollectedEmails([...collectedEmails, currentEmail.trim()])
     //   // onSubmit(folderName.trim());
@@ -276,7 +286,7 @@ const ShareModal = ({
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 scale-100">
         <div className="px-6 py-4 pb-0 border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Share "{item.name}"</h2>
+          <h2 className="text-xl font-semibold text-gray-900 truncate overflow-hidden whitespace-nowrap">Share "{item.name}"</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="p-6">
@@ -354,7 +364,7 @@ const ShareModal = ({
               type="button"
               onClick={() => {
                 if (publicToken != null) {
-                  navigator.clipboard.writeText(publicToken).then(() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/dashboard/shared/public/${publicToken}`).then(() => {
                     toast.success('Link copied to clipboard!');
                   }).catch(() => {
                     toast.error('Failed to copy link to clipboard');
@@ -445,6 +455,9 @@ const MyCDN = () => {
     setShowShareModal(true)
 
     console.log('Share item:', item);
+  };
+
+  const handleCopyCDNUrl = (item: DisplayItem) => {
     if (item.url) {
       navigator.clipboard.writeText(item.url).then(() => {
         toast.success('Link copied to clipboard!');
@@ -455,7 +468,7 @@ const MyCDN = () => {
       toast.error('No shareable link available for this item');
     }
     setActiveDropdown(null);
-  };
+  }
 
   const handleStar = async (item: DisplayItem) => {
     console.log('Toggle star for item:', item);
@@ -904,6 +917,10 @@ const MyCDN = () => {
         <DropdownMenu
           isOpen={true}
           onClose={() => setActiveDropdown(null)}
+          onCopyCDN={() => {
+            const item = displayItems.find(i => i.id === activeDropdown);
+            if (item) handleCopyCDNUrl(item);
+          }}
           onShare={() => {
             const item = displayItems.find(i => i.id === activeDropdown);
             if (item) handleShare(item);
