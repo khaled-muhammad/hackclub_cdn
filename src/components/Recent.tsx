@@ -11,9 +11,10 @@ import {
   FiFile,
 } from "react-icons/fi";
 import session from "../consts";
+import { formatDate, getFileIconAndColor } from "../utils";
 
 // Interface for recent file data
-interface RecentFile {
+export interface RecentFile {
   id: string;
   original_filename: string;
   file_extension: string;
@@ -23,85 +24,6 @@ interface RecentFile {
   updated_at: string;
   created_at: string;
 }
-
-const formatDate = (iso: string) => {
-  const date = new Date(iso);
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-};
-
-// Function to get file icon and color based on file extension
-const getFileIconAndColor = (fileExtension: string, mimeType?: string) => {
-  const extension = fileExtension?.toLowerCase().replace('.', '') || '';
-  
-  // Image files
-  if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(extension) || 
-      mimeType?.startsWith('image/')) {
-    return { 
-      icon: <FiImage size={24} />, 
-      type: 'image',
-      bgColor: 'bg-gradient-to-br from-green-400 to-emerald-500 shadow-green-500/30'
-    };
-  }
-  
-  // Video files
-  if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv', '3gp'].includes(extension) || 
-      mimeType?.startsWith('video/')) {
-    return { 
-      icon: <FiVideo size={24} />, 
-      type: 'video',
-      bgColor: 'bg-gradient-to-br from-purple-400 to-purple-500 shadow-purple-500/30'
-    };
-  }
-  
-  // Document files
-  if (['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt'].includes(extension) || 
-      mimeType?.includes('pdf') || mimeType?.includes('document')) {
-    return { 
-      icon: <FiFileText size={24} />, 
-      type: 'document',
-      bgColor: 'bg-gradient-to-br from-orange-400 to-red-500 shadow-orange-500/30'
-    };
-  }
-  
-  // Archive files
-  if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(extension) || 
-      mimeType?.includes('zip') || mimeType?.includes('archive')) {
-    return { 
-      icon: <FiArchive size={24} />, 
-      type: 'archive',
-      bgColor: 'bg-gradient-to-br from-yellow-400 to-orange-500 shadow-yellow-500/30'
-    };
-  }
-  
-  // Design files
-  if (['sketch', 'fig', 'psd', 'ai', 'xd'].includes(extension)) {
-    return { 
-      icon: <FiPenTool size={24} />, 
-      type: 'design',
-      bgColor: 'bg-gradient-to-br from-pink-400 to-rose-500 shadow-pink-500/30'
-    };
-  }
-  
-  // Spreadsheet files
-  if (['xls', 'xlsx', 'csv', 'ods'].includes(extension) || 
-      mimeType?.includes('spreadsheet')) {
-    return { 
-      icon: <FiFileText size={24} />, 
-      type: 'spreadsheet',
-      bgColor: 'bg-gradient-to-br from-green-400 to-green-500 shadow-green-500/30'
-    };
-  }
-  
-  // Default for unknown files
-  return { 
-    icon: <FiFile size={24} />, 
-    type: 'file',
-    bgColor: 'bg-gradient-to-br from-gray-400 to-gray-500 shadow-gray-500/30'
-  };
-};
 
 const Recent = () => {
     const [recentFiles, setRecentFiles] = useState<RecentFile[] | null>(null);
@@ -140,10 +62,10 @@ rounded-xl font-semibold shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:s
 transition-all duration-300">
               Last 7 days
             </button>
-            <button className="px-4 py-2.5 text-emerald-700 bg-white/70 backdrop-blur-sm border-2 
+            {/* <button className="px-4 py-2.5 text-emerald-700 bg-white/70 backdrop-blur-sm border-2 
 border-emerald-200 hover:bg-white hover:shadow-md rounded-xl font-semibold transition-all duration-300">
               Last 30 days
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
