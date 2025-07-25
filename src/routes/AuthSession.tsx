@@ -16,7 +16,7 @@ const AuthSession = () => {
         session.post('auth/retrieve', {auth_code: authCode}).then((res) => {
             toast.success("Account verified Successfully.");
             localStorage.setItem('user', JSON.stringify(res.data['user']));
-            navigate('/dashboard')
+            window.location.href = `${window.location.origin}/dashboard`
         }).catch(() => {
             toast.error("Login expired, please try again later.")
             navigate('/auth');
