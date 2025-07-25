@@ -109,6 +109,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await session.post('/auth/logout', {}, { 
         withCredentials: true 
+      }).then((res) => {
+        window.location.href = window.location.origin + '/auth';
       });
     } catch (error) { /* continue with local storage */ } finally {
       setUser(null);

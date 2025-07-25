@@ -47,7 +47,7 @@ const SetNewPasswordRoute = () => {
     session.post('auth/reset_password', {'new_password': newPassword}).then((res) => {
         setIsLoading(false);
         toast.success(res.data.detail);
-        window.location.href = 'https://localhost:5173/dashboard'
+        window.location.href = window.location.origin + '/dashboard';
     }).catch((err) => {
         // Handle error appropriately (e.g., show a toast message)
         toast.error(err.response.data.detail)
