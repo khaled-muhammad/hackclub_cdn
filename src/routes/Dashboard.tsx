@@ -22,7 +22,7 @@ import {
   FiBarChart,
   FiPenTool,
 } from "react-icons/fi";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useUploadWrapper } from "../components/UploadWrapper";
 import session from "../consts";
@@ -31,6 +31,8 @@ import { toast } from 'react-toastify';
 import './Dashboard.css';
 import { NavLink } from "react-router-dom";
 import { summarizeStats } from "../types";
+import { formatDate } from "../utils";
+import type { ApiResponse, DisplayItem } from "../components/MyCDN";
 
 // New Folder Modal Component
 const NewFolderModal = ({ 
@@ -140,6 +142,64 @@ const NewFolderModal = ({
   );
 };
 
+const getFileIconAndColor = (mimeType: string, filename: string) => {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    
+    if (mimeType.startsWith('image/')) {
+      return { icon: <FiImage size={24} />, color: 'green' };
+    } else if (mimeType.startsWith('video/')) {
+      return { icon: <FiVideo size={24} />, color: 'purple' };
+    } else if (mimeType.includes('pdf')) {
+      return { icon: <FiFileText size={24} />, color: 'red' };
+    } else if (mimeType.includes('zip') || mimeType.includes('archive')) {
+      return { icon: <FiArchive size={24} />, color: 'orange' };
+    } else if (extension === 'sketch') {
+      return { icon: <FiPenTool size={24} />, color: 'pink' };
+    } else if (mimeType.includes('spreadsheet') || extension === 'xlsx' || extension === 'csv') {
+      return { icon: <FiFileText size={24} />, color: 'green' };
+    } else {
+      return { icon: <FiFile size={24} />, color: 'gray' };
+    }
+};
+
+  const convertToDisplayItems = (data: ApiResponse): DisplayItem[] => {
+    const items: DisplayItem[] = [];
+
+    // Add folders
+    data.folders.forEach(folder => {
+      items.push({
+        id: folder.id,
+        name: folder.name,
+        type: 'folder',
+        owner: folder.owner_detail.full_name,
+        modified: formatDate(folder.updated_at),
+        size: '—',
+        icon: <FiFolder size={24} />,
+        color: 'blue',
+        is_starred: false // No backend support yet
+      });
+    });
+
+    // Add files
+    data.files.forEach(file => {
+      const { icon, color } = getFileIconAndColor(file.mime_type, file.filename);
+      items.push({
+        id: file.id,
+        name: file.original_filename,
+        type: 'file',
+        owner: file.owner_detail.full_name,
+        modified: formatDate(file.updated_at),
+        size: file.file_size_human,
+        icon,
+        color,
+        url: file.cdn_url,
+        is_starred: file.is_starred
+      });
+    });
+
+    return items;
+  };
+
 const Dashboard = () => {
   const { user, isAuthenticated, logout, isLoading } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -149,8 +209,10 @@ const Dashboard = () => {
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const [searchResults, setSearchResults] = useState(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [stats, setStats] = useState(null);
   const [storageByType, setStorageByType] = useState(null);
@@ -257,12 +319,18 @@ const Dashboard = () => {
     })
   }, [])
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  const search = () => {
     if (searchQuery.trim()) {
-      // Implement your search logic here
+      session.get(`cdn/search/?q=${searchQuery}`).then((res) => {
+        setSearchResults(convertToDisplayItems(res.data.results));
+      })
       console.log("Searching for:", searchQuery);
     }
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    search();
   };
 
   const clearSearch = () => {
@@ -342,9 +410,12 @@ const Dashboard = () => {
                   ref={searchRef}
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                    search()
+                  }}
                   onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setIsSearchFocused(false)}
+                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                   placeholder="Search files, folders, or anything..."
                   className={`
                     w-full pl-12 pr-20 py-4 text-gray-900 placeholder-gray-500
@@ -387,34 +458,27 @@ const Dashboard = () => {
                       <p className="text-sm text-gray-500 mb-2">
                         Search results for "{searchQuery}"
                       </p>
-                      {/* Add your search results here */}
                       <div className="space-y-2">
-                        <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <span className="text-blue-600 text-sm"><FiFileText /></span>
+                        {searchResults ? searchResults.map((res) => <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => {
+                            setSearchQuery('')
+                            if (res.type == 'file') {
+                                window.open(res.url, '_blank');
+                            } else {
+                                navigate(`/dashboard/my-cdn/${res.id}`)
+                            }
+                        }}>
+                          <div className={`w-8 h-8 bg-${res.color}-100 rounded-lg flex items-center justify-center`}>
+                            <span className={`text-${res.color}-600 text-sm`}>{res.icon}</span>
                           </div>
                           <div>
                             <p className="text-sm font-medium text-gray-900">
-                              document.pdf
+                              {res.name}
                             </p>
                             <p className="text-xs text-gray-500">
-                              Modified 2 hours ago
+                              Uploaded at {formatDate(res.modified)}
                             </p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                          <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                            <span className="text-green-600 text-sm"><FiImage /></span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">
-                              image.jpg
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Modified yesterday
-                            </p>
-                          </div>
-                        </div>
+                        </div>) : <span>Searching ...</span>}
                       </div>
                     </div>
                   ) : (
@@ -423,19 +487,23 @@ const Dashboard = () => {
                           Quick actions
                         </p>
                         <div className="space-y-1">
-                          <button className="w-full flex items-center gap-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors">
+                          <button className="w-full flex items-center gap-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                          onClick={() => navigate('/dashboard/my-cdn')}>
                             <span className="text-lg text-green-600"><FiFolder /></span>
                             <span className="text-sm text-gray-700">
                               Browse all files
                             </span>
                           </button>
-                          <button className="w-full flex items-center gap-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors">
+                          <button className="w-full flex items-center gap-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                          onClick={triggerFileUpload}>
                             <span className="text-lg text-green-600"><FiUpload /></span>
                             <span className="text-sm text-gray-700">
                               Upload new file
                             </span>
                           </button>
-                          <button className="w-full flex items-center gap-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors">
+                          <button className="w-full flex items-center gap-3 p-2 text-left hover:bg-gray-50 rounded-lg transition-colors" onClick={() => {
+                            navigate('/dashboard')
+                          }}>
                             <span className="text-lg text-green-600"><FiBarChart /></span>
                             <span className="text-sm text-gray-700">
                               View analytics
