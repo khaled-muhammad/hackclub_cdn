@@ -2,6 +2,7 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 
 export const API_BASE_URL = "/api";
+// export const API_BASE_URL = 'https://hackclub-cdn.khaled.hackclub.app/api'
 
 // http instance
 export const session = axios.create({
