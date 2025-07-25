@@ -31,7 +31,7 @@ import { toast } from 'react-toastify';
 import './Dashboard.css';
 import { NavLink } from "react-router-dom";
 import { summarizeStats } from "../types";
-import { formatDate } from "../utils";
+import { formatDate, useIsTabletOrSmaller } from "../utils";
 import type { ApiResponse, DisplayItem } from "../components/MyCDN";
 
 // New Folder Modal Component
@@ -213,7 +213,7 @@ const Dashboard = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
-
+  const isTabletOrSmaller = useIsTabletOrSmaller();
   const [stats, setStats] = useState(null);
   const [storageByType, setStorageByType] = useState(null);
 
@@ -366,7 +366,9 @@ const Dashboard = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isSearchFocused]);
 
-  return (
+  return isTabletOrSmaller? (<>
+  <h1>No Mobile or Tablet Support yet!</h1>
+  </>) : (
     <div className="grid h-screen overflow-hidden" style={{
       gridTemplateAreas: `
         "header header"
