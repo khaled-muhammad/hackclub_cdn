@@ -41,6 +41,7 @@ const Trash = () => {
               if (window.confirm(`Are you sure you want to clear your trash? This action cannot be undone.`)) {
                 session.post('cdn/trash/empty/').then((res) => {
                   toast(res.data.message)
+                  update();
                 }).catch(() => {
                   toast.error("Failed to empty your trash")
                 })
