@@ -21,7 +21,15 @@ A secure, fast, and reliable content delivery network and file manager built for
 
 ## 📸 Screenshots
 
-<!-- Add your screenshots here -->
+<p align="center">
+  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/0ccfbd930f2130d4c9187ceb8f6c65546499f463_85qj.png" alt="Dashboard" width="32%"/>
+  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/5ca6dd25e0aa566d7524b7447cbfb80ef92ef646_85q2.png" alt="Upload Modal" width="32%"/>
+  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/cc517654afb349137b39bab8e5ea629104991d2f_85qL.png" alt="Sharing" width="32%"/>
+</p>
+
+<p align="center">
+  <b>Dashboard</b> &nbsp;&nbsp;&nbsp;&nbsp; <b>Upload Modal</b> &nbsp;&nbsp;&nbsp;&nbsp; <b>Sharing</b>
+</p>
 
 ---
 
