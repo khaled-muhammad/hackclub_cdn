@@ -16,7 +16,8 @@ export default defineConfig({
     },
     port: 5173,
     proxy: {
-      '/api': 'https://hackclub-cdn.khaled.hackclub.app/',
+      //'/api': 'https://hackclub-cdn.khaled.hackclub.app/',
+      '/api': 'http://127.0.0.1:8000/',
     }
   },
 })
