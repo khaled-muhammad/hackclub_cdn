@@ -322,7 +322,7 @@ export const useUploadWrapper = (props: UploadWrapperProps = {}) => {
     const md5Hash = await generateMD5Hash(file);
     const sha256Hash = await generateSHA256Hash(file);
     
-    if (!folderId) {
+    if (!folderId || folderId == 'null') {
       folderId = await fetchRootFolderId();
     }
 
