@@ -66,15 +66,19 @@ mb-4"></div>
             className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-green-300 transition-all duration-300"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 shrink-0 bg-green-100 rounded-full flex items-center justify-center">
                   <span className="text-sm font-semibold text-green-700">
                     <img src={item.owner_detail.profile_picture} className="rounded-full" />
                   </span>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 truncate overflow-hidden whitespace-nowrap">{item.resource_detail.filename || item.resource_detail.name }</h3>
-                  <p className="text-sm text-gray-500">by {item.owner_detail.full_name}</p>
+                <div className="flex flex-col min-w-0">
+                  <h3 className="font-semibold text-gray-900 truncate">
+                    {item.resource_detail.filename || item.resource_detail.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 truncate">
+                    by {item.owner_detail.full_name}
+                  </p>
                 </div>
               </div>
               <button className="text-green-600 hover:text-green-700 text-sm font-medium" onClick={() => {

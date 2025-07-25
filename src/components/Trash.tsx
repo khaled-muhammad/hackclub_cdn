@@ -71,13 +71,13 @@ const Trash = () => {
             key={index}
             className="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-xl hover:shadow-md transition-all duration-300"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center opacity-60">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              <div className="w-12 h-12 shrink-0 bg-red-100 rounded-lg flex items-center justify-center opacity-60">
                 <span className="text-xl text-red-600">{item.resource_type == 'file'? <FiFile size={24} /> : <FiFolder size={24} />}</span>
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-700 truncate overflow-hidden whitespace-nowrap">{item.original_name}</h3>
-                <p className="text-sm text-red-600">
+              <div className="flex flex-col min-w-0">
+                <h3 className="font-semibold text-gray-700 truncate">{item.original_name}</h3>
+                <p className="text-sm text-red-600 truncate">
                   Deleted {formatDate(item.deleted_at)} • Expires in {getRemainingDays(item.permanent_delete_at)} days
                 </p>
               </div>

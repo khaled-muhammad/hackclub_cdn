@@ -107,7 +107,7 @@ const Starred = () => {
                   <FiStar size={12} className="text-white fill-current" />
                 </div>
               </div>
-              <div>
+              <div className="flex flex-col max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
                 <h3 className="font-semibold text-gray-900 truncate overflow-hidden whitespace-nowrap">{item.original_filename}</h3>
                 <p className="text-sm text-gray-500">
                   {item.file_size_human} • Starred {formatDate(item.updated_at)}
